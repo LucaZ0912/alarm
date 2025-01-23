@@ -1,7 +1,8 @@
-#===========================================
-#DoorSecruityThingy=========================
-#Autor: PAtrick Schweig, Luca Zickenheiner==
-#===========================================
+#============================================
+#DoorSecruityThingy==========================
+#Autor: Patrick Schweig, Luca Zickenheiner===
+#GitHub: https://github.com/LucaZ0912/alarm==
+#============================================
 
 #==========Imports==========
 #Standartimports
@@ -19,7 +20,7 @@ from mfrc522 import MFRC522
 import sensor
 from DBconnector import get_db_connection, is_authorized, is_admin, dbLog, show_incidents
 
-#==========Bootingstuff==========
+#==========Set Up==========
 reader = SimpleMFRC522()
 reader2 = MFRC522()
 
@@ -27,6 +28,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 sensorSeutup = False
+AdminSetup = True
 
 #Datenbankenverbindung herstellen
 conn, connected = get_db_connection()
@@ -53,6 +55,7 @@ def readTag(reader): #Funktion zum lesen der "ID" und des "Texts" auf dem Tag
     id, text = reader.read()
     print(id)
     print(text)
+
 def readAdmin(reader): #Funktion zum erkennen des Admin Status. 
     id, text = reader.read()
     isAdmin, name = is_admin(conn, id) #Gibt TRUE und den Namen zurück wenn die gegebene ID in der Datenbank mit dem Zusatz "Admin" hinterlegt ist
@@ -60,6 +63,7 @@ def readAdmin(reader): #Funktion zum erkennen des Admin Status.
         return True, name
     else: 
         return False, name
+
 def checkTag(reader): #Checkt ob der Benutzer zugriff zum Raum hat
     print("Bitte halte deine Karte bereit")
     id, text = reader.read()
@@ -68,6 +72,8 @@ def checkTag(reader): #Checkt ob der Benutzer zugriff zum Raum hat
     if accepted:
         print(f"Ja cool komm rein, {name}") 
         GPIO.output(GLED, GPIO.HIGH)
+
+        #Daten für die Datenbank vorbereiten
         Date = datetime.datetime.now()
         Event = "Zuganggewaehrt"
         User = id
@@ -83,6 +89,7 @@ def checkTag(reader): #Checkt ob der Benutzer zugriff zum Raum hat
         print("du kommst hier nich rein!")
         GPIO.output(RLED, GPIO.HIGH)
         
+        #Daten für die Datenbank vorbereiten
         Date = datetime.datetime.now()
         Event = "Zugang nicht gewaehrt"
         User = id
@@ -105,35 +112,37 @@ while True:
         if status == reader2.MI_OK:
             try:
                 idTest, name = readAdmin(reader) #Bekommt TRUE (Bei Admin) oder FALSE wieder
-                if idTest: #Wenn kein Admin wird nur die checkTag Funktion getriggert
+                if idTest and AdminSetup: #Wenn die Datenbank ein True zurück gebt und die Einstellung AdminSetUp true ist.
                     isAdmin = True #Wenn Admin wird eine oberfläche zur Auswahl getriggert
                     while isAdmin:
                         input1 = None
                         print("====================")
                         print(f"Hallo {name}")
                         print("Willkommen in der Admin übersicht.")
-                        input1 = input("Willst du tun? Tag Lesen (l) / Tag beschreiben (s) / Eingang checken (c) / Incidents überprüfen (i) abmelden (a) ")
+                        input1 = input("Willst du tun? Tag Lesen (1) / Tag beschreiben (2) / Eingang checken (3) / Incidents überprüfen (4) abmelden (5) ")
                         time.sleep(1)
                         #print("Dein Input ist:")
                         print(input1)
-                        if input1 == "l":
+                        if input1 == "1":
                             print("Lesemodul aktiv")
                             print("halte das Tag an das Lesegerät")
                             time.sleep(0.1)
                             readTag(reader)
                             print("====================")
-                        elif input1 == "s":
+                        elif input1 == "2":
                             writeTag(reader)
                             print("====================")
-                        elif input1 == "c":
+                        elif input1 == "3":
                             checkTag(reader)
                             print("====================")
-                        elif input1 == "a":
+                        elif input1 == "4":
                             print(f"Auf Widersehen {name}")
                             print("====================")
                             isAdmin = False
                             status = None
-                        elif input1 == "i":
+                        elif input1 == "5
+                        
+                        ":
                             show_incidents(conn)
                         else:
                             print("ich konnte deinen Input nicht zuordnen. Bitte versuche es erneut")
