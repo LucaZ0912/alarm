@@ -11,6 +11,8 @@
 #           1.2 Die Möglichkeit zur Anmeldung als Administrator mit ID und einem selbstgewählten Passwort
 #           1.3 Ein Dashboard, auf dem die letzten Incidents direkt einsehbar sind und Änderungen an Einstellungen 
 #               vorgenommen werden können.
+#           1.4 Profit
+#           1.5 den Scheiß verschlüsseln
 # 
 # 2. Dokumentation:
 #                 2.1 Dokumentation machen :'( 
