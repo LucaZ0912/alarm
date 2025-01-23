@@ -27,7 +27,7 @@ reader2 = MFRC522()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-sensorSeutup = False
+sensorSetup = False
 AdminSetup = True
 
 #Datenbankenverbindung herstellen
@@ -103,7 +103,7 @@ def checkTag(reader): #Checkt ob der Benutzer zugriff zum Raum hat
             print("Datenbankverbindung nicht aktiv.") #Speichert das Event in der Incidents Datenbank
     
 #==========MAIN LOOP==========
-if sensorSeutup:
+if sensorSetup:
     sensor.setup_motion_sensor(conn)
 while True:
     status = None
@@ -140,9 +140,7 @@ while True:
                             print("====================")
                             isAdmin = False
                             status = None
-                        elif input1 == "5
-                        
-                        ":
+                        elif input1 == "5":
                             show_incidents(conn)
                         else:
                             print("ich konnte deinen Input nicht zuordnen. Bitte versuche es erneut")
