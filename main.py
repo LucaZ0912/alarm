@@ -4,6 +4,18 @@
 #GitHub: https://github.com/LucaZ0912/alarm==
 #============================================
 
+
+#==========ToDo's==========
+#1. WebService: 
+#           1.1 Ein WebServiceTool erstellen, auf der die Tabelle "Incidents" sowie der Status der Anlage ablesbar ist
+#           1.2 Die Möglichkeit zur Anmeldung als Administrator mit ID und einem selbstgewählten Passwort
+#           1.3 Ein Dashboard, auf dem die letzten Incidents direkt einsehbar sind und Änderungen an Einstellungen 
+#               vorgenommen werden können.
+# 
+# 2. Dokumentation:
+#                 2.1 Dokumentation machen :'( 
+
+
 #==========Imports==========
 #Standartimports
 import time
@@ -27,6 +39,10 @@ reader2 = MFRC522()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+#Einstellungen
+#     Idee für Später: Einstellungen können im Dashboard verändert werden und werden dann beim
+#                      Setup in die entsprechenden Variablen geladen. Einstellungsänderungen 
+#                      werden auch in der Incidents Tabelle eingetragen und dokumentiert
 sensorSetup = False
 AdminSetup = True
 

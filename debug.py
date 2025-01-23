@@ -1,3 +1,5 @@
+#Dient dem lesen von Tags ohne Admintag (beispielsweise wenn nach dem Schulblock die alten Tags nicht mehr zur verfügung stehen)
+
 import RPi.GPIO as GPIO
 import mfrc522
 import time
