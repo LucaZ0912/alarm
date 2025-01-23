@@ -41,12 +41,3 @@ def debugLesen(reader):
 
 while True:
     debugLesen(reader)
-        
-
-
-            
-                
-            
-   
-    
-    
