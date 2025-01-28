@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Event Dashboard</h1>
+            <div class="header-buttons">
+                <button id="alarmButton" onclick="toggleAlarm()" class="arm">Scharf schalten</button>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+        
+        <nav class="tabs">
+            <a href="{{ url_for('dashboard') }}" class="tab">Incidents</a>
+            <a href="{{ url_for('users') }}" class="tab active">User</a>
+            <a href="{{ url_for('options') }}" class="tab">Options</a>
+        </nav>
+
+        <div class="users-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>RFID</th>
+                        <th>Rolle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                        <td>{{ user[2] }}</td>
+                        <td>{{ user[3] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

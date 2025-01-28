@@ -136,5 +136,21 @@ def full_incidents():
     events = get_events(limit=None)  # Hole alle Events
     return render_template('full_incidents.html', events=events)
 
+@app.route('/users')
+@login_required
+def users():
+    conn = get_db_connection()[0]
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, name, rfid, rolle FROM user')
+    users = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('users.html', users=users)
+
+@app.route('/options')
+@login_required
+def options():
+    return render_template('options.html')
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

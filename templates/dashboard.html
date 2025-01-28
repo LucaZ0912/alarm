@@ -94,6 +94,12 @@
             </div>
         </header>
         
+        <nav class="tabs">
+            <a href="{{ url_for('dashboard') }}" class="tab active">Incidents</a>
+            <a href="{{ url_for('users') }}" class="tab">User</a>
+            <a href="{{ url_for('options') }}" class="tab">Options</a>
+        </nav>
+
         <div class="events-grid">
             <div class="event-section">
                 <h2>Zugangs-Events</h2>

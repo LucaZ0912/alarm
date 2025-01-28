@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Options Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Event Dashboard</h1>
+            <div class="header-buttons">
+                <button id="alarmButton" onclick="toggleAlarm()" class="arm">Scharf schalten</button>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+        
+        <nav class="tabs">
+            <a href="{{ url_for('dashboard') }}" class="tab">Incidents</a>
+            <a href="{{ url_for('users') }}" class="tab">User</a>
+            <a href="{{ url_for('options') }}" class="tab active">Options</a>
+        </nav>
+
+        <div class="options-container">
+            <h2>Einstellungen</h2>
+            <p>Hier werden zukünftige Optionen angezeigt.</p>
+        </div>
+    </div>
+</body>
+</html> 
