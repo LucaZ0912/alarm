@@ -99,4 +99,50 @@ def show_incidents(con):
 
     cursor.close()
 
+def get_events(limit=50):
+    conn = get_db_connection()[0]
+    cursor = conn.cursor()
+    
+    if limit is None:
+        # Wenn kein Limit gesetzt ist, hole alle Events ohne LIMIT-Klausel
+        cursor.execute('''
+            SELECT date, event, user 
+            FROM incidents 
+            ORDER BY date DESC
+        ''')
+    else:
+        # Mit Limit
+        cursor.execute('''
+            SELECT date, event, user 
+            FROM incidents 
+            ORDER BY date DESC 
+            LIMIT %s
+        ''', (limit,))
+    
+    events = cursor.fetchall()
+    conn.close()
+    return events
+
+def get_events_by_type(event_types, limit=5):
+    conn = get_db_connection()[0]
+    cursor = conn.cursor()
+    
+    # Erstelle den IN-Operator mit der richtigen Anzahl von Platzhaltern
+    placeholders = ', '.join(['%s'] * len(event_types))
+    query = f'''
+        SELECT date, event, user 
+        FROM incidents 
+        WHERE event IN ({placeholders})
+        ORDER BY date DESC 
+        LIMIT %s
+    '''
+    
+    # Füge limit als letzten Parameter hinzu
+    params = list(event_types) + [limit]
+    cursor.execute(query, params)
+    
+    events = cursor.fetchall()
+    conn.close()
+    return events
+
 

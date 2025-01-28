@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Alle Ereignisse</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Alle Ereignisse</h1>
+            <div class="header-buttons">
+                <a href="{{ url_for('dashboard') }}" class="back-btn">Zurück zum Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+        
+        <div class="full-events-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Event</th>
+                        <th>Benutzer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                    <tr>
+                        <td>{{ event[0] }}</td>
+                        <td>{{ event[1] }}</td>
+                        <td>{{ event[2] if event[2] else 'System' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

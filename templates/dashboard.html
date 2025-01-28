@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function toggleAlarm() {
+            fetch('/toggle_alarm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const button = document.getElementById('alarmButton');
+                if (data.status === 'armed') {
+                    button.textContent = 'Entschärfen';
+                    button.classList.remove('arm');
+                    button.classList.add('disarm');
+                } else if (data.status === 'disarmed') {
+                    button.textContent = 'Scharf schalten';
+                    button.classList.remove('disarm');
+                    button.classList.add('arm');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        // Prüfe den initialen Status
+        function checkAlarmStatus() {
+            fetch('/alarm_status')
+            .then(response => response.json())
+            .then(data => {
+                const button = document.getElementById('alarmButton');
+                if (data.status === 'armed') {
+                    button.textContent = 'Entschärfen';
+                    button.classList.remove('arm');
+                    button.classList.add('disarm');
+                } else {
+                    button.textContent = 'Scharf schalten';
+                    button.classList.remove('disarm');
+                    button.classList.add('arm');
+                }
+            });
+        }
+
+        function updateEvents() {
+            fetch('/get_events')
+                .then(response => response.json())
+                .then(data => {
+                    // Update Zugangs-Events
+                    updateEventTable('access-events', data.access);
+                    // Update Bewegungs-Events
+                    updateEventTable('motion-events', data.motion);
+                    // Update Lichtschranken-Events
+                    updateEventTable('barrier-events', data.barrier);
+                })
+                .catch(error => console.error('Fehler:', error));
+        }
+
+        function updateEventTable(tableId, events) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            tbody.innerHTML = ''; // Tabelle leeren
+            
+            events.forEach(event => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${event[0]}</td>
+                    <td>${event[1]}</td>
+                    <td>${event[2] || 'System'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Aktualisierung alle 30 Sekunden
+        setInterval(updateEvents, 30000);
+
+        // Auch beim Laden der Seite ausführen
+        window.onload = function() {
+            checkAlarmStatus();  // Bestehende Funktion
+            updateEvents();      // Neue Funktion
+        };
+    </script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Event Dashboard</h1>
+            <div class="header-buttons">
+                <button id="alarmButton" onclick="toggleAlarm()" class="arm">Scharf schalten</button>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+        
+        <div class="events-grid">
+            <div class="event-section">
+                <h2>Zugangs-Events</h2>
+                <div class="events-table" id="access-events">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Event</th>
+                                <th>Benutzer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="event-section">
+                <h2>Bewegungsmelder</h2>
+                <div class="events-table" id="motion-events">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Event</th>
+                                <th>Benutzer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="event-section">
+                <h2>Lichtschranke</h2>
+                <div class="events-table" id="barrier-events">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Datum</th>
+                                <th>Event</th>
+                                <th>Benutzer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="full-width-button">
+            <a href="{{ url_for('full_incidents') }}" class="view-all-btn">Alle Ereignisse anzeigen</a>
+        </div>
+    </div>
+</body>
+</html> 
