@@ -277,4 +277,78 @@ th {
 .options-container h2 {
     margin-top: 0;
     color: #2c3e50;
-} 
+}
+
+.filter-section {
+    background-color: white;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.filter-toggle {
+    width: 100%;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 4px;
+    text-align: left;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-toggle:hover {
+    background-color: #e5e5e5;
+}
+
+.filter-content {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.filter-options label:hover {
+    background-color: #f5f5f5;
+}
+
+.filter-options input[type="checkbox"] {
+    margin: 0;
+}
+
+.filter-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.full-events-table th {
+    cursor: pointer;
+    user-select: none;
+}
+
+.full-events-table th:hover {
+    background-color: #eee;
+}
+
+.sort-indicator {
+    display: inline-block;
+    width: 15px;
+}

@@ -134,7 +134,18 @@ def get_events_json():
 @login_required
 def full_incidents():
     events = get_events(limit=None)  # Hole alle Events
-    return render_template('full_incidents.html', events=events)
+    
+    # Vordefinierte Event-Typen für Filter
+    event_types = [
+        "Zugang gewährt",
+        "Zugang nicht gewährt",
+        "Bewegung festgestellt",
+        "Lichtschranke aktiviert"
+    ]
+    
+    return render_template('full_incidents.html', 
+                         events=events,
+                         event_types=event_types)
 
 @app.route('/users')
 @login_required

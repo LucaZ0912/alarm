@@ -3,6 +3,81 @@
 <head>
     <title>Alle Ereignisse</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function sortTable(column) {
+            const table = document.querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const currentOrder = tbody.getAttribute('data-order') || 'asc';
+            const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+            
+            rows.sort((a, b) => {
+                let aVal = a.cells[column].textContent;
+                let bVal = b.cells[column].textContent;
+                
+                if (column === 0) { // Datum
+                    aVal = new Date(aVal);
+                    bVal = new Date(bVal);
+                }
+                
+                if (aVal < bVal) return currentOrder === 'asc' ? -1 : 1;
+                if (aVal > bVal) return currentOrder === 'asc' ? 1 : -1;
+                return 0;
+            });
+            
+            tbody.innerHTML = '';
+            rows.forEach(row => tbody.appendChild(row));
+            tbody.setAttribute('data-order', newOrder);
+            
+            // Update sort indicators
+            document.querySelectorAll('.sort-indicator').forEach(el => el.textContent = '');
+            const indicator = table.rows[0].cells[column].querySelector('.sort-indicator');
+            indicator.textContent = currentOrder === 'asc' ? ' ▼' : ' ▲';
+        }
+
+        function filterEvents() {
+            const selectedTypes = Array.from(document.querySelectorAll('input[name="eventType"]:checked'))
+                .map(cb => cb.value);
+            
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const eventType = row.cells[1].textContent;
+                row.style.display = selectedTypes.length === 0 || selectedTypes.includes(eventType) ? '' : 'none';
+            });
+        }
+
+        function toggleAllFilters(checked) {
+            document.querySelectorAll('input[name="eventType"]').forEach(cb => {
+                cb.checked = checked;
+            });
+            filterEvents();
+        }
+
+        function toggleFilterSection() {
+            const filterContent = document.querySelector('.filter-content');
+            const toggleButton = document.querySelector('.filter-toggle');
+            
+            if (filterContent.style.display === 'none' || !filterContent.style.display) {
+                filterContent.style.display = 'block';
+                toggleButton.innerHTML = 'Filter ▼';
+            } else {
+                filterContent.style.display = 'none';
+                toggleButton.innerHTML = 'Filter ▶';
+            }
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            // Hide filter content initially
+            document.querySelector('.filter-content').style.display = 'none';
+            // Check "Alle" checkbox by default
+            const alleCheckbox = document.querySelector('input[type="checkbox"][value="alle"]');
+            if (alleCheckbox) {
+                alleCheckbox.checked = true;
+                toggleAllFilters(true);
+            }
+        };
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -14,13 +89,31 @@
             </div>
         </header>
         
+        <div class="filter-section">
+            <button class="filter-toggle" onclick="toggleFilterSection()">Filter ▶</button>
+            <div class="filter-content">
+                <div class="filter-options">
+                    <label>
+                        <input type="checkbox" value="alle" onclick="toggleAllFilters(this.checked)" checked>
+                        Alle
+                    </label>
+                    {% for event_type in event_types %}
+                    <label>
+                        <input type="checkbox" name="eventType" value="{{ event_type }}" checked onchange="filterEvents()">
+                        {{ event_type }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
         <div class="full-events-table">
             <table>
                 <thead>
                     <tr>
-                        <th>Datum</th>
-                        <th>Event</th>
-                        <th>Benutzer</th>
+                        <th onclick="sortTable(0)">Datum <span class="sort-indicator"></span></th>
+                        <th onclick="sortTable(1)">Event <span class="sort-indicator"></span></th>
+                        <th onclick="sortTable(2)">Benutzer <span class="sort-indicator"></span></th>
                     </tr>
                 </thead>
                 <tbody>
