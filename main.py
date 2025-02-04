@@ -49,6 +49,10 @@ sensorSetup = True
 AdminSetup = False
 didSetup = False #Wenn der Setup schon durchgeführt wurde, wird diese Variable auf True gesetzt
 
+#==========Einstellungen==========
+BUZZER_ENABLED = False  # Schalter für den Buzzer
+BUZZER_PIN = 18
+
 #Datenbankenverbindung herstellen
 conn, connected = get_db_connection()
 
@@ -61,8 +65,6 @@ GPIO.setup(RLED, GPIO.OUT)
 GPIO.setup(YLED, GPIO.OUT)
 GPIO.setup(GLED, GPIO.OUT)
 
-
-BUZZER_PIN = 19  # Passe diesen Pin an deine Verkabelung an
 
 #==========FUNKTIONEN==========
 
@@ -86,30 +88,35 @@ def readAdmin(reader): #Funktion zum erkennen des Admin Status.
         return False, name
 
 def setup_buzzer():
-    GPIO.setup(BUZZER_PIN, GPIO.OUT)
-    global buzzer_pwm
-    buzzer_pwm = GPIO.PWM(BUZZER_PIN, 440)
-    buzzer_pwm.start(0)
+    if BUZZER_ENABLED:
+        GPIO.setup(BUZZER_PIN, GPIO.OUT)
+        global buzzer_pwm
+        buzzer_pwm = GPIO.PWM(BUZZER_PIN, 440)
+        buzzer_pwm.start(0)
 
 def play_tone(frequency, duration=0.1):
+    if not BUZZER_ENABLED:
+        return
     buzzer_pwm.ChangeFrequency(frequency)
     buzzer_pwm.ChangeDutyCycle(50)
     time.sleep(duration)
     buzzer_pwm.ChangeDutyCycle(0)
-    time.sleep(0.05)  # Kleine Pause zwischen Tönen
+    time.sleep(0.05)
 
 def play_access_granted():
-    # Spielt eine aufsteigende, fröhliche Melodie
+    if not BUZZER_ENABLED:
+        return
     play_tone(392)  # G4
     play_tone(494)  # B4
     play_tone(587)  # D5
-    play_tone(784, 0.2)  # G5 (länger)
+    play_tone(784, 0.2)  # G5
 
 def play_access_denied():
-    # Spielt eine absteigende, warnende Melodie
+    if not BUZZER_ENABLED:
+        return
     play_tone(587)  # D5
     play_tone(494)  # B4
-    play_tone(370, 0.3)  # F#4 (länger)
+    play_tone(370, 0.3)  # F#4
 
 def checkTag(reader):
     print("Bitte halte deine Karte bereit")
@@ -199,9 +206,12 @@ def double_beep():
     beep(0.1)
 
 def test_buzzer():
+    if not BUZZER_ENABLED:
+        print("Buzzer ist deaktiviert")
+        return
     setup_buzzer()
     print("Testing buzzer...")
-    play_tone(440, 0.5)  # Spielt Ton A4 für 0.5 Sekunde
+    play_tone(440, 0.5)
     time.sleep(1)
     print("Test complete")
 
@@ -209,7 +219,7 @@ def main_loop():
     global didSetup
     
     # Buzzer initialisieren
-    #setup_buzzer()
+    setup_buzzer()
     
     try:
         while True:
