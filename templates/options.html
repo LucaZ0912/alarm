@@ -3,6 +3,34 @@
 <head>
     <title>Options Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function saveSettings() {
+            const startTime = document.getElementById('autoArmStart').value;
+            const endTime = document.getElementById('autoArmEnd').value;
+            const sensors = Array.from(document.querySelectorAll('input[name="sensors"]:checked'))
+                                .map(cb => cb.value);
+
+            fetch('/save_settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    auto_arm_start: startTime,
+                    auto_arm_end: endTime,
+                    active_sensors: sensors
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Einstellungen gespeichert!');
+                } else {
+                    alert('Fehler beim Speichern!');
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -21,8 +49,42 @@
         </nav>
 
         <div class="options-container">
-            <h2>Einstellungen</h2>
-            <p>Hier werden zukünftige Optionen angezeigt.</p>
+            <div class="settings-section">
+                <h2>Automatisches Scharfschalten</h2>
+                <div class="time-settings">
+                    <div class="time-input">
+                        <label for="autoArmStart">Start Zeit:</label>
+                        <input type="time" id="autoArmStart" value="{{ settings.auto_arm_start }}">
+                    </div>
+                    <div class="time-input">
+                        <label for="autoArmEnd">End Zeit:</label>
+                        <input type="time" id="autoArmEnd" value="{{ settings.auto_arm_end }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h2>Aktive Sensoren</h2>
+                <div class="sensor-options">
+                    <label>
+                        <input type="checkbox" name="sensors" value="motion" 
+                               {{ 'checked' if 'motion' in settings.active_sensors }}>
+                        Bewegungsmelder
+                    </label>
+                    <label>
+                        <input type="checkbox" name="sensors" value="barrier" 
+                               {{ 'checked' if 'barrier' in settings.active_sensors }}>
+                        Lichtschranke
+                    </label>
+                    <label>
+                        <input type="checkbox" name="sensors" value="rfid" 
+                               {{ 'checked' if 'rfid' in settings.active_sensors }}>
+                        RFID
+                    </label>
+                </div>
+            </div>
+
+            <button onclick="saveSettings()" class="save-btn">Einstellungen speichern</button>
         </div>
     </div>
 </body>

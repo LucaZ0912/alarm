@@ -133,19 +133,38 @@ def get_events_json():
 @app.route('/full_incidents')
 @login_required
 def full_incidents():
-    events = get_events(limit=None)  # Hole alle Events
+    sort = request.args.get('sort', 'date')  # Standard-Sortierung nach Datum
+    order = request.args.get('order', 'desc')  # Standard-Reihenfolge absteigend
     
-    # Vordefinierte Event-Typen für Filter
-    event_types = [
-        "Zugang gewährt",
-        "Zugang nicht gewährt",
-        "Bewegung festgestellt",
-        "Lichtschranke aktiviert"
-    ]
-    
-    return render_template('full_incidents.html', 
-                         events=events,
-                         event_types=event_types)
+    try:
+        conn = get_db_connection()[0]
+        cursor = conn.cursor()
+        
+        # SQL-Query mit dynamischer Sortierung
+        order_direction = "DESC" if order == 'desc' else "ASC"
+        if sort == 'event':
+            sql = f"SELECT date, event, user FROM incidents ORDER BY event {order_direction}, date DESC"
+        elif sort == 'user':
+            sql = f"SELECT date, event, user FROM incidents ORDER BY user {order_direction}, date DESC"
+        else:  # sort == 'date'
+            sql = f"SELECT date, event, user FROM incidents ORDER BY date {order_direction}"
+            
+        cursor.execute(sql)
+        incidents = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        # Bestimme die umgekehrte Sortierrichtung für die Links
+        reverse_order = 'asc' if order == 'desc' else 'desc'
+        
+        return render_template('full_incidents.html', 
+                             incidents=incidents, 
+                             current_sort=sort, 
+                             current_order=order,
+                             reverse_order=reverse_order)
+    except Exception as e:
+        print(f"Fehler beim Abrufen der Vorfälle: {str(e)}")
+        return render_template('full_incidents.html', incidents=[])
 
 @app.route('/users')
 @login_required
