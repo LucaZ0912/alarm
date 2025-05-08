@@ -3,6 +3,10 @@ from DBconnector import dbLog
 import datetime
 from functools import partial
 
+from picamera import PiCamera
+from time import sleep
+import os
+
 import RPi.GPIO as GPIO
 import time
 
@@ -31,6 +35,7 @@ GPIO.setwarnings(False)
 # Callback-Funktion für Bewegungserkennung
 def motion_detected_callback(channel, con):
     print("Motion detected at " + str(time.ctime()))
+    Picpath = capture_image()
 
     #Datenprotokollierung: 
     Date = datetime.datetime.now()
@@ -39,7 +44,7 @@ def motion_detected_callback(channel, con):
 
     GPIO.output(YLED, GPIO.HIGH)
 
-    dbLog(con, Date, Event, User)
+    dbLog(con, Date, Event, User, Picpath)
 
     time.sleep(2)
     GPIO.output(YLED, GPIO.LOW)
@@ -89,6 +94,29 @@ def setup_motion_sensor(con):
     GPIO.add_event_detect(PIR_GPIO2, GPIO.RISING, callback=pommes_callback_with_con)
     
     print("Bewegungssensor und Pommes Schranke aktiv.")
+
+def capture_image(save_dir="/home/it/it/captures"):
+    # Sicherstellen, dass das Zielverzeichnis existiert
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    # Kamera initialisieren
+    camera = PiCamera()
+    camera.resolution = (1024, 768)
+
+    # Kamera warmlaufen lassen
+    camera.start_preview()
+    sleep(2)
+
+    # Bild aufnehmen
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = os.path.join(save_dir, f"image_{timestamp}.jpg")
+    camera.capture(filename)
+    camera.stop_preview()
+    camera.close()
+
+    print(f"Bild gespeichert: {filename}")
+    return filename
 
 # Clean-up Funktion
 def cleanup():

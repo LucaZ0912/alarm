@@ -22,6 +22,7 @@
 #Standartimports
 import time
 import datetime
+import os
 
 #Bauteil-Bibliotheken
 import RPi.GPIO as GPIO

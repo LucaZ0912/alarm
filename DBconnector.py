@@ -57,14 +57,14 @@ def is_admin(conn, testID):
         print(f"Fehler beim Abrufen der Daten: {err}")
         return False, None
 
-def dbLog(conn, Date, Event, User):
+def dbLog(conn, Date, Event, User, Picpath):
     try:
-        print(Date, Event, User)
+        print(Date, Event, User, Picpath)
         cursor = conn.cursor()
-        query = "INSERT INTO incidents (date, event, user) VALUES (%s, %s, %s)"
+        query = "INSERT INTO incidents (date, event, user, picpath) VALUES (%s, %s, %s, %s)"
         print(query)
-        data =  (Date, Event, User)
-        data = (data[0].replace(microsecond=0), data[1], data[2])
+        data =  (Date, Event, User, Picpath)
+        data = (data[0].replace(microsecond=0), data[1], data[2], data[3])
         print(data)
         print("hallo")
         cursor.execute(query, data)
