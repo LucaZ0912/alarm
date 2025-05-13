@@ -1,5 +1,5 @@
 # save this as app.py
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, send_from_directory
 from functools import wraps
 import sqlite3
 from DBconnector import get_db_connection, get_events, get_events_by_type
@@ -146,7 +146,7 @@ def full_incidents():
             sql = f"SELECT date, event, user FROM incidents ORDER BY event {order_direction}, date DESC"
         elif sort == 'user':
             sql = f"SELECT date, event, user FROM incidents ORDER BY user {order_direction}, date DESC"
-        else:  # sort == 'date'
+        else: # sort == 'date'
             sql = f"SELECT date, event, user FROM incidents ORDER BY date {order_direction}"
             
         cursor.execute(sql)
@@ -181,6 +181,17 @@ def users():
 @login_required
 def options():
     return render_template('options.html')
+
+@app.route('/bilder', endpoint='pictures_here')
+def show_images():
+    image_folder = '/home/it/it/captures'
+    image_files = sorted([f for f in os.listdir(image_folder) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.gif'))])
+    return render_template('pictures_here.html', images=image_files)
+
+# Route, um einzelne Bilder aus dem Ordner bereitzustellen
+@app.route('/captures/<filename>')
+def get_image(filename):
+    return send_from_directory('/home/it/it/captures', filename)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bildergalerie</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .gallery img {
+            max-width: 300px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Bildergalerie</h1>
+            <div class="header-buttons">
+                <a href="{{ url_for('dashboard') }}" class="back-btn">Zurück zum Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            </div>
+        </header>
+
+        <div class="gallery">
+            {% for image in images %}
+            <img src="{{ url_for('get_image', filename=image) }}" alt="{{ image }}">
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
